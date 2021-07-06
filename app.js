@@ -16,6 +16,8 @@ let Crearitem = (actividad) => {
         estado: false   
     }
 
+    //agregar un elemento al array
+
     arrayActividades.push(item);
 
     return item
@@ -41,23 +43,49 @@ let PintarLocalStorage = () => {
     }
     else {
         arrayActividades.forEach(element => {
-            listaActividadesUser.innerHTML += `<div class="alert alert-danger my-3" role="alert">
-            <i class="material-icons float-left mr-2">
-                accessibility
-            </i>
-            <b>${element.actividad}</b> - ${element.estado}
-            <div class="float-right">
-                <i class="material-icons">
-                    done
-                </i>
-                <i class="material-icons">
-                    delete
-                </i>
-            </div>
-        </div>`
+            if(element.estado){
+                listaActividadesUser.innerHTML += `<div class="alert alert-success my-3" role="alert"><i class="material-icons float-left mr-2">accessibility</i><b>${element.actividad}</b> - ${element.estado}<div class="float-right"><i class="material-icons">done</i></div><div class="float-right"><i class="material-icons">delete</i></div></div>` 
+            }else{
+
+                listaActividadesUser.innerHTML += `<div class="alert alert-danger my-3" role="alert"><i class="material-icons float-left mr-2">accessibility</i><b>${element.actividad}</b> - ${element.estado}<div class="float-right"><i class="material-icons">done</i></div><div class="float-right"><i class="material-icons">delete</i></div></div>`
+
+            }
+           
         });
     }
 }
+
+let EliminarActividad = (actividad) => {
+
+    //encontrar y guardar el index del array
+
+    let indexArray;
+    arrayActividades.forEach((elemento, index) => {
+        if(elemento.actividad === actividad){
+            indexArray = index;
+        }
+    });
+
+    // eliminar elemento del array
+
+    arrayActividades.splice(indexArray, 1);
+
+    GuardarLocalStorage();
+}
+
+let EditarActividad = (actividad) => {
+
+    // otra manera de encontrar y guardar el index de una array
+
+    let indexArray = arrayActividades.findIndex((elemento) => {
+        return elemento.actividad === actividad
+    });
+
+    arrayActividades[indexArray].estado = true;
+
+    GuardarLocalStorage();
+}
+
 
 
 //eventLiseners
@@ -77,6 +105,14 @@ document.addEventListener('DOMContentLoaded', PintarLocalStorage)
 
 listaActividadesUser.addEventListener('click', (event) => {
     event.preventDefault();
-    console.log(event.path[0].childNodes[3].innerHTML)
-});
+
+ 
+        let textoActividad =  event.path[2].childNodes[1].innerHTML;
+            if(event.target.innerHTML === 'delete'){
+                EliminarActividad (textoActividad)
+            }
+            if(event.target.innerHTML === 'done'){
+                EditarActividad (textoActividad)
+            }
     
+});
